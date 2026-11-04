@@ -53,9 +53,16 @@ export interface Debtor {
   id: number;
   fullName: string;
   dni: string;
+  email?: string;
+  phone?: string;
   course: string;
+  course_name?: string;
   academic_year?: string;
+  id_academic_year?: number;
+  id_enrollment?: number;
   unpaidInstallments: number;
+  unpaidMonths?: string[];
+  monthlyFee?: number;
   totalDebt: number;
 }
 

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { Section, Schedule, SectionSchedule, UserSection, Course, Classroom, AcademicYear, User, Level } from '../models/index.js';
+import { Section, Schedule, SectionSchedule, UserSection, Course, Classroom, AcademicYear, User, Level, Enrollment } from '../models/index.js';
 import { Op } from 'sequelize';
 import { sequelize } from '../config/database.js';
 import { DAY_LABELS } from '../constants.js';
@@ -20,7 +20,18 @@ export const getSections = async (req: Request, res: Response) => {
         { model: Classroom, as: 'classroom' },
         { model: AcademicYear, as: 'academic_year' },
         { model: Schedule, as: 'schedules' },
-        { model: User, as: 'professors', attributes: ['id', 'first_name', 'last_name', 'email'] }
+        { model: User, as: 'professors', attributes: ['id', 'first_name', 'last_name', 'email', 'dni', 'phone'] },
+        {
+          model: Enrollment,
+          as: 'enrollments',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'first_name', 'last_name', 'dni', 'email', 'phone', 'active']
+            }
+          ]
+        }
       ]
     });
     res.json({ success: true, data: sections });
@@ -39,7 +50,18 @@ export const getSectionById = async (req: Request, res: Response): Promise<void>
         { model: Classroom, as: 'classroom' },
         { model: AcademicYear, as: 'academic_year' },
         { model: Schedule, as: 'schedules' },
-        { model: User, as: 'professors', attributes: ['id', 'first_name', 'last_name', 'email'] }
+        { model: User, as: 'professors', attributes: ['id', 'first_name', 'last_name', 'email', 'dni', 'phone'] },
+        {
+          model: Enrollment,
+          as: 'enrollments',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'first_name', 'last_name', 'dni', 'email', 'phone', 'active']
+            }
+          ]
+        }
       ]
     });
     if (!section) {

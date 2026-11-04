@@ -10,6 +10,7 @@ import Courses from './admin/Courses'
 import Classrooms from './admin/Classrooms'
 import AcademicYears from './admin/AcademicYears'
 import Schedules from './admin/Schedules'
+import Reports from './admin/Reports'
 import Login from './auth/Login'
 import StudentDashboard from './student/StudentDashboard'
 
@@ -115,6 +116,10 @@ export default function App() {
 
           {activeTab === SIDEBAR_TABS.SCHEDULES && (
             <Schedules />
+          )}
+
+          {activeTab === SIDEBAR_TABS.REPORTS && (
+            <Reports />
           )}
         </div>
       </main>

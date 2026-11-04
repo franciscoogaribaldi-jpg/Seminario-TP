@@ -418,9 +418,16 @@ export const getDebtors = async (req: Request, res: Response): Promise<void> => 
           id: userObj.id,
           fullName: `${userObj.last_name}, ${userObj.first_name}`,
           dni: userObj.dni,
+          email: userObj.email,
+          phone: userObj.phone,
           course: enroll.section?.name || 'Curso General',
+          course_name: course?.course_name || enroll.section?.name || 'Curso General',
           academic_year: ay?.name || 'General',
+          id_academic_year: ay?.id_academic_year,
+          id_enrollment: enroll.id_enrollment,
           unpaidInstallments: unpaidInstallments.length,
+          unpaidMonths: unpaidInstallments,
+          monthlyFee: baseAmount,
           totalDebt
         });
       }

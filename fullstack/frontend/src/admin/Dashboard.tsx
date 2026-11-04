@@ -70,18 +70,26 @@ export default function Dashboard({ setActiveTab }: DashboardProps) {
             <div className="text-[11px] text-slate-500 font-medium mt-1">Inscripciones</div>
           </div>
         </div>
-        <div className={`${theme.card.wrapper} p-4 flex items-center gap-4`}>
+        <div 
+          onClick={() => setActiveTab(SIDEBAR_TABS.REPORTS)} 
+          className={`${theme.card.wrapper} p-4 flex items-center gap-4 cursor-pointer hover:border-emerald-300 transition-all`}
+          title="Ver comisiones y cupos"
+        >
           <div className="w-11 h-11 rounded bg-emerald-100 flex items-center justify-center text-lg">🏫</div>
           <div>
             <div className="text-xl font-bold text-slate-800">{sectionsCount}</div>
-            <div className="text-[11px] text-slate-500 font-medium mt-1">Comisiones activas</div>
+            <div className="text-[11px] text-slate-500 font-medium mt-1">Comisiones activas ➔</div>
           </div>
         </div>
-        <div className={`${theme.card.wrapper} p-4 flex items-center gap-4`}>
+        <div 
+          onClick={() => setActiveTab(SIDEBAR_TABS.REPORTS)} 
+          className={`${theme.card.wrapper} p-4 flex items-center gap-4 cursor-pointer hover:border-rose-300 transition-all`}
+          title="Ver reporte de alumnos morosos"
+        >
           <div className="w-11 h-11 rounded bg-rose-100 flex items-center justify-center text-lg">⚠️</div>
           <div>
             <div className="text-xl font-bold text-slate-800">{debtorsCount}</div>
-            <div className="text-[11px] text-slate-500 font-medium mt-1">Deudores / Impagos</div>
+            <div className="text-[11px] text-slate-500 font-medium mt-1">Deudores / Impagos ➔</div>
           </div>
         </div>
       </div>

@@ -28,6 +28,7 @@ export interface Section {
   academic_year?: any;
   schedules?: Schedule[];
   professors?: User[];
+  enrollments?: any[];
 }
 
 export const sectionService = {
