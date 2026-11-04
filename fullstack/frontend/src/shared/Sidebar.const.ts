@@ -6,6 +6,7 @@ export const SIDEBAR_TABS = {
   COURSES: 'courses',
   CLASSROOMS: 'classrooms',
   ACADEMIC_YEARS: 'academic-years',
+  SCHEDULES: 'schedules',
   LEVELS: 'levels',
 } as const;
 

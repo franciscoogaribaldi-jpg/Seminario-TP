@@ -88,6 +88,7 @@ import enrollmentRoutes from './modules/enrollment/enrollment.router.js';
 import tuitionFeeRoutes from './modules/tuition_fee/tuition_fee.router.js';
 import classroomRoutes from './modules/classroom/classroom.router.js';
 import academicYearRoutes from './modules/academic_year/academic_year.router.js';
+import scheduleRoutes from './modules/schedule/schedule.router.js';
 import sectionRoutes from './routes/section.router.js';
 import paymentRouter from './routes/payment.router.js';
 
@@ -106,6 +107,7 @@ app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/tuition-fees', tuitionFeeRoutes);
 app.use('/api/classrooms', classroomRoutes);
 app.use('/api/academic-years', academicYearRoutes);
+app.use('/api/schedules', scheduleRoutes);
 app.use('/api/sections', sectionRoutes);
 app.use('/api/payments', paymentRouter);
 
