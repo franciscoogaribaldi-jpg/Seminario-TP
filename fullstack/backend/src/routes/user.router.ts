@@ -5,6 +5,8 @@ const router = Router();
 
 // Routes
 router.post('/login', controller.login);
+router.put('/change-password', controller.changePassword);
+router.put('/:id/change-password', controller.changePassword);
 router.get('/', controller.getAllUsers);
 router.get('/check-dni/:dni', controller.checkStudentDni);
 router.get('/:id', controller.getUserById);

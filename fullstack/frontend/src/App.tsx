@@ -81,7 +81,7 @@ export default function App() {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={() => setIsLoggedIn(false)} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
       <main className="flex-1 flex flex-col overflow-hidden">
-        <Topbar activeTab={activeTab} setIsSidebarOpen={setIsSidebarOpen} />
+        <Topbar activeTab={activeTab} setIsSidebarOpen={setIsSidebarOpen} userData={userData} />
 
         <div className={`flex-1 overflow-y-auto p-6 ${theme.layout.mainContainer}`}>
           {activeTab === SIDEBAR_TABS.DASHBOARD && (

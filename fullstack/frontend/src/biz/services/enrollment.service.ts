@@ -16,6 +16,7 @@ export interface Enrollment {
     section?: {
         name: string;
         course?: {
+            course_name?: string;
             level_code: string;
             level?: {
                 name: string;
@@ -66,6 +67,22 @@ export const enrollmentService = {
             if (!response.ok) throw new Error('Error al actualizar la inscripción');
             const json = await response.json();
             return json.data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    },
+
+    finalizeEnrollment: async (id: number, data: { final_grade: number; attendance_percentage: number }): Promise<any> => {
+        try {
+            const response = await fetch(`${API_URL}/${id}/finalize`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            const json = await response.json();
+            if (!response.ok) throw new Error(json.message || 'Error al registrar la finalización del curso');
+            return json;
         } catch (error) {
             console.error(error);
             throw error;

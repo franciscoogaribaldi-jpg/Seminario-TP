@@ -112,6 +112,62 @@ export class EnrollmentService {
     return existingEnrollment;
   }
 
+  async finalize(id: any, data: { final_grade: number; attendance_percentage: number }) {
+    const existingEnrollment: any = await Enrollment.findOne({
+      where: { id_enrollment: id },
+      include: [
+        { model: User, as: 'user' },
+        {
+          model: Section, as: 'section',
+          include: [{ model: Course, as: 'course', include: [{ model: Level, as: 'level' }] }]
+        }
+      ]
+    });
+
+    if (!existingEnrollment) {
+      return null;
+    }
+
+    const grade = Number(data.final_grade);
+    const attendance = Number(data.attendance_percentage);
+
+    if (isNaN(grade) || grade < 0 || grade > 10) {
+      throw new Error('La nota final debe ser un valor numérico entre 0 y 10.');
+    }
+
+    if (isNaN(attendance) || attendance < 0 || attendance > 100) {
+      throw new Error('El porcentaje de asistencia debe ser un valor numérico entre 0 y 100.');
+    }
+
+    const isPassed = grade >= 6 && attendance >= 75;
+    const newStatus = isPassed ? 'Aprobado' : 'Desaprobado';
+
+    await existingEnrollment.update({
+      final_grade: grade,
+      attendance_percentage: attendance,
+      status: newStatus
+    });
+
+    // Si aprobó el curso, se acredita el nivel en su historial académico
+    if (isPassed && existingEnrollment.section?.course?.level_code) {
+      const levelCode = Number(existingEnrollment.section.course.level_code);
+      const userId = Number(existingEnrollment.id_user);
+      const existingUserLevel = await UserLevel.findOne({
+        where: { id_user: userId, level_code: levelCode }
+      });
+      if (!existingUserLevel) {
+        const actualDate = new Date().toISOString().split('T')[0];
+        await UserLevel.create({
+          id_user: userId,
+          level_code: levelCode,
+          start_date: actualDate
+        });
+      }
+    }
+
+    return existingEnrollment;
+  }
+
   async delete(id: any) {
     const existingEnrollment = await Enrollment.findOne({ where: { id_enrollment: id } });
     if (!existingEnrollment) {

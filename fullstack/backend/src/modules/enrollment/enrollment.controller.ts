@@ -79,3 +79,49 @@ export const deleteEnrollment = async (req: Request, res: Response): Promise<voi
     res.status(500).json({ status: 'db_error', message: 'Error interno al desactivar la inscripción' });
   }
 };
+
+
+export const finalizeEnrollment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { final_grade, attendance_percentage } = req.body;
+
+    if (final_grade === undefined || final_grade === null || final_grade === '' ||
+        attendance_percentage === undefined || attendance_percentage === null || attendance_percentage === '') {
+      res.status(400).json({ status: 'error', message: 'Por favor complete la nota final y el porcentaje de asistencia.' });
+      return;
+    }
+
+    const numGrade = Number(final_grade);
+    const numAttendance = Number(attendance_percentage);
+
+    if (isNaN(numGrade) || numGrade < 0 || numGrade > 10) {
+      res.status(400).json({ status: 'error', message: 'La nota final debe ser un valor numérico entre 0 y 10.' });
+      return;
+    }
+
+    if (isNaN(numAttendance) || numAttendance < 0 || numAttendance > 100) {
+      res.status(400).json({ status: 'error', message: 'El porcentaje de asistencia debe ser un valor numérico entre 0 y 100.' });
+      return;
+    }
+
+    const result = await enrollmentService.finalize(id, {
+      final_grade: numGrade,
+      attendance_percentage: numAttendance
+    });
+
+    if (!result) {
+      res.status(404).json({ status: 'error', message: 'Inscripción no encontrada' });
+      return;
+    }
+
+    res.status(200).json({
+      status: 'ok',
+      message: 'Nota y asistencia de finalización registradas exitosamente',
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error finalizing enrollment:', error);
+    res.status(400).json({ status: 'error', message: error?.message || 'Error al registrar finalización del curso' });
+  }
+};

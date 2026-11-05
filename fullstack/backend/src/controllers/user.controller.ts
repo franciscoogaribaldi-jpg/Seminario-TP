@@ -348,3 +348,68 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({ status: 'db_error', message: 'Error interno del servidor', data: null });
   }
 };
+
+
+export const changePassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.params.id || req.body.userId;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!userId) {
+      res.status(400).json({ status: 'error', message: 'Identificador de usuario no proporcionado', data: null });
+      return;
+    }
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      res.status(400).json({ status: 'error', message: 'Todos los campos son obligatorios', data: null });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      res.status(400).json({ status: 'error', message: 'La nueva contraseña debe tener al menos 6 caracteres', data: null });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      res.status(400).json({ status: 'error', message: 'La nueva contraseña y su confirmación no coinciden', data: null });
+      return;
+    }
+
+    const user: any = await User.findOne({
+      where: { id: userId, active: true }
+    });
+
+    if (!user) {
+      res.status(404).json({ status: 'error', message: 'Usuario no encontrado o inactivo', data: null });
+      return;
+    }
+
+    const isCurrentValid = await bcrypt.compare(currentPassword, user.password).catch(() => false)
+      || (user.password === currentPassword);
+
+    if (!isCurrentValid) {
+      res.status(400).json({ status: 'error', message: 'La contraseña actual es incorrecta', data: null });
+      return;
+    }
+
+    const isSameAsCurrent = await bcrypt.compare(newPassword, user.password).catch(() => false)
+      || (user.password === newPassword);
+
+    if (isSameAsCurrent) {
+      res.status(400).json({ status: 'error', message: 'La nueva contraseña no puede ser igual a la contraseña actual', data: null });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await user.update({ password: hashedPassword });
+
+    res.status(200).json({
+      status: 'ok',
+      message: 'Contraseña actualizada exitosamente',
+      data: null
+    });
+  } catch (error: any) {
+    console.error('Error changing password:', error?.message || error);
+    res.status(500).json({ status: 'db_error', message: 'Error interno al cambiar la contraseña', data: null });
+  }
+};
