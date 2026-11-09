@@ -352,8 +352,23 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
 
 export const changePassword = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.params.id || req.body.userId;
-    const { currentPassword, newPassword, confirmPassword } = req.body;
+    let userId = req.params.id || req.body.userId;
+    const { currentPassword, newPassword, confirmPassword, role, username } = req.body;
+
+    // Fallbacks para identificar el usuario si no vino userId explícito
+    if (!userId && username) {
+      const userByUsername: any = await User.findOne({ where: { username, active: true } });
+      if (userByUsername) {
+        userId = userByUsername.id;
+      }
+    }
+
+    if (!userId && (role === 'ADMIN' || !role)) {
+      const adminUser: any = await User.findOne({ where: { role: 'ADMIN', active: true } });
+      if (adminUser) {
+        userId = adminUser.id;
+      }
+    }
 
     if (!userId) {
       res.status(400).json({ status: 'error', message: 'Identificador de usuario no proporcionado', data: null });

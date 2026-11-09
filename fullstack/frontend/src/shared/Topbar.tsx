@@ -44,9 +44,21 @@ export default function Topbar({ activeTab, setIsSidebarOpen, userData }: Topbar
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const userInitial = userData?.first_name ? userData.first_name.charAt(0).toUpperCase() : 'SC'
-  const displayName = userData?.first_name ? `${userData.first_name} ${userData.last_name || ''}`.trim() : 'Secretaría'
-  const displayRole = userData?.role === 'ADMIN' ? 'Secretaría / Admin' : userData?.role || 'Secretaría'
+  // Obtener datos del usuario desde props o de localStorage como fallback
+  const currentUser = userData || (() => {
+    try {
+      const saved = localStorage.getItem('userData')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })()
+
+  const currentUserId = currentUser?.id || currentUser?.id_user || currentUser?.userId || (currentUser?.role === 'ADMIN' ? 1 : undefined)
+
+  const userInitial = currentUser?.first_name ? currentUser.first_name.charAt(0).toUpperCase() : 'SC'
+  const displayName = currentUser?.first_name ? `${currentUser.first_name} ${currentUser.last_name || ''}`.trim() : 'Secretaría'
+  const displayRole = currentUser?.role === 'ADMIN' ? 'Secretaría / Admin' : currentUser?.role || 'Secretaría'
 
   return (
     <>
@@ -129,7 +141,7 @@ export default function Topbar({ activeTab, setIsSidebarOpen, userData }: Topbar
       <ChangePasswordModal
         isOpen={isChangePasswordOpen}
         onClose={() => setIsChangePasswordOpen(false)}
-        userId={userData?.id}
+        userId={currentUserId}
       />
     </>
   )

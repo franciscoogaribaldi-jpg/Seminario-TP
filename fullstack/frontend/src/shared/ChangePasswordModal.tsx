@@ -65,11 +65,32 @@ export default function ChangePasswordModal({
 
     try {
       setIsSubmitting(true);
+
+      let resolvedUserId = userId;
+      let userRole: string | undefined;
+      let username: string | undefined;
+
+      try {
+        const saved = localStorage.getItem('userData');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          resolvedUserId = resolvedUserId || parsed?.id || parsed?.id_user || parsed?.userId;
+          username = parsed?.username;
+          userRole = parsed?.role;
+        }
+      } catch {}
+
+      if (!userRole) {
+        userRole = localStorage.getItem('userRole') || undefined;
+      }
+
       const res = await authService.changePassword({
-        userId,
+        userId: resolvedUserId,
         currentPassword,
         newPassword,
-        confirmPassword
+        confirmPassword,
+        role: userRole,
+        username
       });
 
       setSuccessMsg(res.message || 'Contraseña actualizada exitosamente.');

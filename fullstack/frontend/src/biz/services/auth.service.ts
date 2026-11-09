@@ -5,6 +5,8 @@ export interface ChangePasswordPayload {
   currentPassword: string;
   newPassword: string;
   confirmPassword: string;
+  role?: string;
+  username?: string;
 }
 
 export const authService = {
